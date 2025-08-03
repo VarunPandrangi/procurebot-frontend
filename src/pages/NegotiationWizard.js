@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 
+// 👇 Use env variable for backend API
+const API_URL = process.env.REACT_APP_API_URL;
 
 // Tab header helper
 function TabHeader({ tabs, current, onSelect }) {
@@ -108,7 +110,7 @@ export default function NegotiationWizard() {
       (sup, i) => i === supIdx
         ? { ...sup, items: sup.items.map(
               (item, j) => j === itemIdx ? { ...item, [field]: value } : item
-          ) }
+            ) }
         : sup
     ));
   };
@@ -134,7 +136,7 @@ export default function NegotiationWizard() {
       (sup, i) => i === supIdx
         ? { ...sup, items: sup.items.map(
               (item, j) => j === itemIdx ? { ...item, [field]: value } : item
-          ) }
+            ) }
         : sup
     ));
   };
@@ -146,7 +148,8 @@ export default function NegotiationWizard() {
     try {
       const results = [];
       for (const supplier of suppliers) {
-        const res = await axios.post("http://localhost:5000/api/negotiations", {
+        // 👇 Use API_URL here
+        const res = await axios.post(`${API_URL}/api/negotiations`, {
           name: negotiationName,
           buyer_email: buyerEmail,
           supplier_email: supplier.email,

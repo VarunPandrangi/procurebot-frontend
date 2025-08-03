@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
 
+// 👇 Use env variable for backend API
+const API_URL = process.env.REACT_APP_API_URL;
 
 const initialTarget = {
   price: "",
@@ -30,7 +32,8 @@ export default function BuyerForm() {
     setLink(null);
 
     try {
-      const res = await axios.post("http://localhost:5000/api/negotiations", {
+      // Use the deployed backend URL
+      const res = await axios.post(`${API_URL}/api/negotiations`, {
         name: negotiationName,
         buyer_email: buyerEmail,
         supplier_email: supplierEmail,

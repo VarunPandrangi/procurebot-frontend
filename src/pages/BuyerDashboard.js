@@ -2,8 +2,11 @@ import React, { useState, useMemo } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 
-const CHECK_ENDPOINT = "http://localhost:5000/api/negotiations/code-exists/";
-const API_URL = "http://localhost:5000/api/negotiations/by-buyer";
+// 👇 Use env variable for backend API
+const API_URL = process.env.REACT_APP_API_URL; // e.g. https://procurebot-backend.onrender.com
+
+const CHECK_ENDPOINT = `${API_URL}/api/negotiations/code-exists/`;
+const BY_BUYER_ENDPOINT = `${API_URL}/api/negotiations/by-buyer`;
 
 const dashStyles = {
   page: { background: "#f4f5fa", minHeight: "100vh" },
@@ -22,12 +25,7 @@ const dashStyles = {
   statValue: { fontWeight: 800, fontSize: 27, color: "#19193d"},
   statValueConcluded: { fontWeight: 800, fontSize: 27, color: "#30c874"},
   filterCard: { background: "#fff", borderRadius: 13, boxShadow:"0 1px 8px #dff3ff16", padding: 19, marginBottom: 22, display: "flex", flexDirection: "column", gap:15 },
-  filterRow: { 
-    display: "flex", 
-    alignItems: "flex-end", 
-    gap: 22,                   // <----- More gap between fields!
-    justifyContent: "flex-start" 
-  },
+  filterRow: { display: "flex", alignItems: "flex-end", gap: 22, justifyContent: "flex-start" },
   filterInput: { borderRadius: 8, padding: "11px 15px", border: 0, background: "#f6f7fd", fontSize: 15, width:"100%" },
   filterInputSearch: { borderRadius: 8, padding: "11px 15px", border: 0, background: "#f6f7fd", fontSize: 15, width:"100%", marginTop:5 },
   filterBtn: { padding: "13px 38px", borderRadius: 8, border:0, background: "#6047ed", color:"#fff", fontWeight: 700, fontSize:16, marginLeft:10, cursor:"pointer" },
@@ -52,7 +50,7 @@ const dashStyles = {
   statusPill: status => ({
     display:"inline-block", minWidth:66, padding:"6px 16px",
     borderRadius: 23, fontWeight:700, fontSize:14,
-    marginRight:18,              // <------ This adds space after the chip!
+    marginRight:18,
     background: status==="active" ? "#e5f8ef" : "#ffeaea",
     color: status==="active" ? "#16bb76" : "#ed4c57", textTransform: "capitalize"
   }),
@@ -92,7 +90,7 @@ export default function BuyerDashboard() {
     e.preventDefault();
     setLoading(true); setNegotiations([]);
     try {
-      const res = await axios.post(API_URL, {
+      const res = await axios.post(BY_BUYER_ENDPOINT, {
         email: email.trim(), dashboard_code: dashboardCode.trim()
       });
       setNegotiations(res.data || []);
@@ -250,7 +248,7 @@ export default function BuyerDashboard() {
                       </Link>
                     </td>
                     <td style={{...dashStyles.td, ...dashStyles.pdfCol}}>
-                      <a href={`http://localhost:5000/api/negotiations/${n.id}/export-pdf`} target="_blank" rel="noopener noreferrer">
+                      <a href={`${API_URL}/api/negotiations/${n.id}/export-pdf`} target="_blank" rel="noopener noreferrer">
                         <button style={dashStyles.pdfBtn}>PDF</button>
                       </a>
                     </td>

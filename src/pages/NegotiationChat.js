@@ -3,7 +3,9 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import { io } from "socket.io-client";
 
-const SOCKET_URL = "http://localhost:5000";
+// Use env variable for backend
+const API_URL = process.env.REACT_APP_API_URL;
+const SOCKET_URL = API_URL; // Works if you use same backend for socket and API
 
 // --- Modern Compact Chat Styles ---
 const chatStyles = {
@@ -79,7 +81,7 @@ const chatStyles = {
 };
 
 async function fetchNegotiation(id) {
-  const res = await axios.get(`${SOCKET_URL}/api/negotiations/${id}`);
+  const res = await axios.get(`${API_URL}/api/negotiations/${id}`);
   return res.data;
 }
 
@@ -148,6 +150,7 @@ export default function NegotiationChat() {
   }, [negotiationId, aiGreetingSent]);
 
   useEffect(() => {
+    // 👇 Use SOCKET_URL env variable for sockets!
     const socket = io(SOCKET_URL, { transports: ['websocket'] });
     socketRef.current = socket;
     socket.emit("joinNegotiation", {
@@ -198,7 +201,7 @@ export default function NegotiationChat() {
   };
 
   const downloadPDF = () => {
-    const url = `http://localhost:5000/api/negotiations/${negotiationId}/export-pdf`;
+    const url = `${API_URL}/api/negotiations/${negotiationId}/export-pdf`;
     window.open(url, "_blank");
   };
 
