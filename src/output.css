@@ -1,0 +1,73 @@
+/*! tailwindcss v4.1.11 | MIT License | https://tailwindcss.com */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@layer properties;
+.collapse {
+  visibility: collapse;
+}
+.flex {
+  display: flex;
+}
+.hidden {
+  display: none;
+}
+.border {
+  border-style: var(--tw-border-style);
+  border-width: 1px;
+}
+.break-all {
+  word-break: break-all;
+}
+.outline {
+  outline-style: var(--tw-outline-style);
+  outline-width: 1px;
+}
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #f7f8fa;
+}
+body {
+  margin: 0;
+  background: #f5f8fa;
+}
+@media (max-width: 700px) {
+  .responsive-container {
+    width: 98vw !important;
+    min-width: 0 !important;
+    padding: 8px !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    font-size: 1rem !important;
+  }
+  .responsive-table {
+    font-size: 0.95rem !important;
+    width: 99vw !important;
+    display: block;
+    overflow-x: auto;
+    min-width: 500px;
+  }
+  .responsive-table th,
+  .responsive-table td {
+    font-size: 0.92rem !important;
+    padding: 4px 4px !important;
+    white-space: nowrap;
+  }
+}
+@property --tw-border-style {
+  syntax: "*";
+  inherits: false;
+  initial-value: solid;
+}
+@property --tw-outline-style {
+  syntax: "*";
+  inherits: false;
+  initial-value: solid;
+}
+@layer properties {
+  @supports ((-webkit-hyphens: none) and (not (margin-trim: inline))) or ((-moz-orient: inline) and (not (color:rgb(from red r g b)))) {
+    *, ::before, ::after, ::backdrop {
+      --tw-border-style: solid;
+      --tw-outline-style: solid;
+    }
+  }
+}
