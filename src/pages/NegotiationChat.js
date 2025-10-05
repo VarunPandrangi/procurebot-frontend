@@ -7,6 +7,10 @@ import { io } from "socket.io-client";
 const API_URL = process.env.REACT_APP_API_URL;
 const SOCKET_URL = API_URL; // Works if you use same backend for socket and API
 
+// Debug: Log the API URL being used
+console.log('🔧 API_URL:', API_URL);
+console.log('🔧 SOCKET_URL:', SOCKET_URL);
+
 // --- Modern Compact Chat Styles ---
 const chatStyles = {
   container: {
@@ -106,6 +110,7 @@ export default function NegotiationChat() {
   const [chatHistory, setChatHistory] = useState([]);
   const [concluded, setConcluded] = useState(false);
   const [aiGreetingSent, setAIGreetingSent] = useState(false);
+  const [socketConnected, setSocketConnected] = useState(false);
   const messagesEndRef = useRef();
   const socketRef = useRef();
 
@@ -150,16 +155,40 @@ export default function NegotiationChat() {
   }, [negotiationId, aiGreetingSent]);
 
   useEffect(() => {
-    // 👇 Use SOCKET_URL env variable for sockets!
-    const socket = io(SOCKET_URL, { transports: ['websocket'] });
-    socketRef.current = socket;
-    socket.emit("joinNegotiation", {
-      negotiationId,
-      userType: userType || "guest"
+    // 👇 Use SOCKET_URL env variable for sockets with proper configuration!
+    const socket = io(SOCKET_URL, { 
+      transports: ['websocket', 'polling'],
+      reconnection: true,
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
+      timeout: 10000
     });
+    socketRef.current = socket;
+    
+    socket.on('connect', () => {
+      console.log('Socket connected:', socket.id);
+      setSocketConnected(true);
+      socket.emit("joinNegotiation", {
+        negotiationId,
+        userType: userType || "guest"
+      });
+    });
+    
+    socket.on('connect_error', (error) => {
+      console.error('Socket connection error:', error);
+      setSocketConnected(false);
+    });
+    
+    socket.on('disconnect', () => {
+      console.log('Socket disconnected');
+      setSocketConnected(false);
+    });
+    
     socket.on("chatMessage", msg => {
+      console.log('Received chat message:', msg);
       setChatHistory(prev => [...prev, msg]);
     });
+    
     socket.on("negotiationConcluded", ({ closer, time }) => {
       setConcluded(true);
       setChatHistory(prev => [
@@ -171,7 +200,11 @@ export default function NegotiationChat() {
         }
       ]);
     });
-    return () => socket.disconnect();
+    
+    return () => {
+      console.log('Disconnecting socket');
+      socket.disconnect();
+    };
     // eslint-disable-next-line
   }, [negotiationId, userType]);
 
@@ -214,6 +247,23 @@ export default function NegotiationChat() {
 
   return (
     <div style={chatStyles.container}>
+      {/* Connection Status Indicator */}
+      <div style={{
+        padding: "8px 12px",
+        marginBottom: 16,
+        borderRadius: 6,
+        background: socketConnected ? "#d4edda" : "#f8d7da",
+        color: socketConnected ? "#155724" : "#721c24",
+        border: `1px solid ${socketConnected ? "#c3e6cb" : "#f5c6cb"}`,
+        fontSize: 13,
+        fontWeight: 600
+      }}>
+        {socketConnected ? "🟢 Connected" : "🔴 Disconnected"} 
+        {!API_URL && " | ⚠️ API_URL not set!"}
+        {API_URL && ` | Backend: ${API_URL}`}
+        {` | Messages in chat: ${chatHistory.length}`}
+      </div>
+      
       {/* Title Section */}
       <div style={chatStyles.titleRow}>
         {negotiation.name}
@@ -247,10 +297,29 @@ export default function NegotiationChat() {
 
       {/* UserType Picker */}
       {!userType && (
-        <div style={{ marginBottom: 16 }}>
-          <label style={{fontSize:15, fontWeight:500}}>Who are you? </label>
-          <select onChange={e => setUserType(e.target.value)} value={userType} style={{fontSize:14, padding:"4px 11px", borderRadius:6}}>
-            <option value="">Select</option>
+        <div style={{ 
+          marginBottom: 16, 
+          padding: "16px", 
+          background: "#fff3cd", 
+          border: "2px solid #ffc107",
+          borderRadius: 8
+        }}>
+          <label style={{fontSize:15, fontWeight:600, color: "#856404"}}>
+            ⚠️ Please select who you are to start chatting: 
+          </label>
+          <select 
+            onChange={e => setUserType(e.target.value)} 
+            value={userType} 
+            style={{
+              fontSize:14, 
+              padding:"8px 11px", 
+              borderRadius:6,
+              marginLeft: 10,
+              border: "2px solid #ffc107",
+              background: "#fff"
+            }}
+          >
+            <option value="">-- Select Your Role --</option>
             <option value="buyer">Buyer</option>
             <option value="supplier">Supplier</option>
           </select>
