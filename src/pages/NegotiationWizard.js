@@ -61,7 +61,8 @@ export default function NegotiationWizard() {
     freightTerms: "",
     deliverySchedule: "",
     warrantyTerms: "",
-    ldClause: ""
+    ldClause: "",
+    context: ""      // 🟢 <-- New context field here!
   });
 
   const [suppliers, setSuppliers] = useState([
@@ -160,7 +161,7 @@ export default function NegotiationWizard() {
             currency,
             supplierName: supplier.name,
             representative: supplier.representative,
-            items: supplier.items
+            items: supplier.items // 🟢 "context" will be included for each item!
           }
         });
         results.push({
@@ -255,8 +256,11 @@ export default function NegotiationWizard() {
             </div>
           )}
 
+          {/* Step 0 */}
           {tab === 0 &&
             <div style={{ marginTop: 8 }}>
+              {/* ... unchanged Step 1 fields ... */}
+              {/* [no changes here] */}
               <div style={{ display:"flex", gap:18, marginBottom:12 }}>
                 <div style={{flex:1}}>
                   <div style={{ fontWeight:500, marginBottom:4 }}>Negotiation Name</div>
@@ -353,6 +357,7 @@ export default function NegotiationWizard() {
             </div>
           }
 
+          {/* Step 1 */}
           {tab === 1 &&
             <div style={{ marginTop: 10 }}>
               <div style={{ fontWeight: "bold", fontSize: 16, marginBottom: 10 }}>Suppliers & Items</div>
@@ -506,6 +511,7 @@ export default function NegotiationWizard() {
             </div>
           }
 
+          {/* Step 2 */}
           {tab === 2 &&
             <div style={{ marginTop: 10 }}>
               <div style={{ fontWeight: "bold", fontSize: 16, marginBottom: 10 }}>Negotiation Terms</div>
@@ -571,6 +577,18 @@ export default function NegotiationWizard() {
                           onChange={e => handleItemTermChange(supIdx, itemIdx, "ldClause", e.target.value)}
                           placeholder="LD Clause (Penalty)"
                           style={{ width: "100%", padding: 6, borderRadius: 4, border:"1px solid #ccd7ee"}}
+                        />
+                      </div>
+
+                      {/* ===== NEW CONTEXT FIELD ===== */}
+                      <div style={{marginBottom: 4}}>
+                        <label style={{fontWeight:500, marginBottom:3, display:"block"}}>Context / Instructions (optional)</label>
+                        <textarea
+                          value={item.context || ""}
+                          onChange={e => handleItemTermChange(supIdx, itemIdx, "context", e.target.value)}
+                          placeholder="E.g. Be strict on price, flexible on delivery; reference previous orders, mention market trends, use split-difference, escalate after 2 rounds, etc."
+                          rows={4}
+                          style={{ width: "100%", padding: 8, borderRadius: 6, minHeight: 50, resize: "vertical", border:"1px solid #ccd7ee", fontFamily:"inherit"}}
                         />
                       </div>
                     </div>
