@@ -1,53 +1,374 @@
-body {
-  background: #f7f8fa;
-  font-family: 'Inter', sans-serif;
+/* ===================================
+   RESET & BASE STYLES
+   ==================================== */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-.negotiation-card {
-  background: #fff;
-  border-radius: 24px;
-  box-shadow: 0 2px 24px #0001;
-  border: 1px solid #e5eaf2;
-  max-width: 600px;
-  margin: 40px auto;
-  padding: 40px 32px;
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
 }
-@media (max-width: 768px){
-  .negotiation-card { padding: 22px 8px }
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+code {
+  font-family: 'SF Mono', 'Monaco', 'Cascadia Code', 'Consolas', monospace;
+}
+
+/* ===================================
+   FORM STYLES - MOBILE FIRST
+   ==================================== */
+
+.form-group {
+  margin-bottom: var(--spacing-md);
+}
+
+.form-label {
+  display: block;
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin-bottom: 6px;
+  letter-spacing: 0.01em;
+}
+
+.form-input,
+.form-textarea,
+.form-select {
+  width: 100%;
+  padding: 12px 16px;
+  min-height: 44px; /* Touch-friendly */
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-base);
+  font-family: inherit;
+  transition: all var(--transition-fast);
+}
+
+.form-input:focus,
+.form-textarea:focus,
+.form-select:focus {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-light);
+  background: var(--color-bg-primary);
+}
+
+.form-textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+@media (min-width: 768px) {
+  .form-label {
+    font-size: var(--font-size-base);
+    margin-bottom: 8px;
+  }
+
+  .form-input,
+  .form-textarea,
+  .form-select {
+    padding: 14px 18px;
+    font-size: var(--font-size-base);
+  }
+}
+
+/* ===================================
+   CARD LAYOUTS - RESPONSIVE
+   ==================================== */
+
+.negotiation-card {
+  background: var(--color-card-bg);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--color-border-light);
+  max-width: 100%;
+  margin: var(--spacing-md) auto;
+  padding: var(--spacing-md);
+  animation: fadeIn 0.5s ease;
+}
+
+@media (min-width: 768px) {
+  .negotiation-card {
+    max-width: 600px;
+    margin: var(--spacing-lg) auto;
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-xl);
+  }
+}
+
+@media (min-width: 1024px) {
+  .negotiation-card {
+    max-width: 700px;
+    padding: var(--spacing-xl);
+  }
+}
+
+@media (min-width: 1440px) {
+  .negotiation-card {
+    max-width: 800px;
+  }
 }
 
 .negotiation-card h1 {
-  font-size: 2.3rem;
-  font-weight: 800;
-  color: #151625;
-  margin-bottom: 6px;
-  text-align: center;
-  letter-spacing: 0.01em;
-}
-.negotiation-card p.subtitle {
-  color: #6d7280;
-  font-size: 1.12rem;
-  text-align: center;
-  margin-bottom: 26px;
-}
-.big-label {
+  font-size: 24px;
   font-weight: 700;
-  font-size: 1.2rem;
-  color: #25274d;
-  margin-bottom: 10px;
+  color: var(--color-text-primary);
+  margin-bottom: 8px;
+  text-align: center;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+@media (min-width: 768px) {
+  .negotiation-card h1 {
+    font-size: 32px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .negotiation-card h1 {
+    font-size: 40px;
+  }
+}
+
+.negotiation-card p.subtitle {
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  text-align: center;
+  margin-bottom: var(--spacing-md);
+  line-height: 1.5;
+}
+
+@media (min-width: 768px) {
+  .negotiation-card p.subtitle {
+    font-size: 16px;
+    margin-bottom: var(--spacing-lg);
+  }
+}
+
+@media (min-width: 1024px) {
+  .negotiation-card p.subtitle {
+    font-size: 18px;
+  }
+}
+
+/* ===================================
+   SECTION COMPONENTS
+   ==================================== */
+
+.big-label {
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--color-text-primary);
+  margin-bottom: 12px;
   display: flex;
   align-items: center;
   gap: 10px;
 }
+
+@media (min-width: 768px) {
+  .big-label {
+    font-size: 18px;
+    margin-bottom: 14px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .big-label {
+    font-size: 20px;
+  }
+}
+
 .section-badge {
-  background: #6366f1;
+  background: var(--color-accent);
   color: #fff;
   font-weight: 700;
   border-radius: 50%;
-  width: 32px; height: 32px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 1rem;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
 }
+
+@media (min-width: 768px) {
+  .section-badge {
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+  }
+}
+
+/* ===================================
+   BUTTON STYLES
+   ==================================== */
+
+button, .button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  min-height: 44px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--color-accent);
+  color: white;
+  font-weight: 600;
+  font-size: var(--font-size-base);
+  font-family: inherit;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+button:hover:not(:disabled), .button:hover {
+  background: var(--color-accent-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+button:active:not(:disabled), .button:active {
+  transform: translateY(0);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media (min-width: 768px) {
+  button, .button {
+    padding: 14px 28px;
+    font-size: var(--font-size-base);
+  }
+}
+
+@media (min-width: 1024px) {
+  button, .button {
+    padding: 16px 32px;
+    font-size: var(--font-size-lg);
+  }
+}
+
+/* ===================================
+   UTILITY CLASSES
+   ==================================== */
+
+.text-center {
+  text-align: center;
+}
+
+.mb-sm { margin-bottom: var(--spacing-sm); }
+.mb-md { margin-bottom: var(--spacing-md); }
+.mb-lg { margin-bottom: var(--spacing-lg); }
+
+.mt-sm { margin-top: var(--spacing-sm); }
+.mt-md { margin-top: var(--spacing-md); }
+.mt-lg { margin-top: var(--spacing-lg); }
+
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.items-center { align-items: center; }
+.justify-center { justify-content: center; }
+.gap-sm { gap: var(--spacing-sm); }
+.gap-md { gap: var(--spacing-md); }
+
+/* ===================================
+   ANIMATIONS
+   ==================================== */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease;
+}
+
+.slide-in {
+  animation: slideIn 0.4s ease;
+}
+
+/* ===================================
+   SCROLLBAR STYLING
+   ==================================== */
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-tertiary);
+}
+
+/* ===================================
+   LOADING STATES
+   ==================================== */
+
+.spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--color-border);
+  border-top-color: var(--color-accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
 .beta-badge {
   background: #eef2ff;
   color: #4338ca;

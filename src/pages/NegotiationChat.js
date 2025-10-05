@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { io } from "socket.io-client";
+import "./NegotiationChat.css";
 
 // Use env variable for backend
 const API_URL = process.env.REACT_APP_API_URL;
@@ -10,79 +11,6 @@ const SOCKET_URL = API_URL; // Works if you use same backend for socket and API
 // Debug: Log the API URL being used
 console.log('🔧 API_URL:', API_URL);
 console.log('🔧 SOCKET_URL:', SOCKET_URL);
-
-// --- Modern Compact Chat Styles ---
-const chatStyles = {
-  container: {
-    maxWidth: 650,
-    margin: "45px auto",
-    background: "#fff",
-    borderRadius: 18,
-    boxShadow: "0 8px 32px #2e467017",
-    padding: "30px 24px 14px 24px",
-    fontFamily: "Inter,Helvetica,Arial,sans-serif",
-  },
-  titleRow: { fontWeight:700, fontSize:25, letterSpacing:-0.1, color:"#21295e", marginBottom:0 },
-  subRow: {marginBottom: 30, marginTop: 12, display:"flex", alignItems:"center", gap:16, fontSize:16},
-  statusChip: {
-    display: "inline-block",
-    padding: "5px 18px",
-    borderRadius: 15,
-    fontWeight: 700,
-    fontSize: 15,
-    marginRight: 7
-  },
-  supplierSub: {fontWeight:500, color:"#353b3d", fontSize:16, marginLeft: 0},
-  downloadBtn: {
-    background: "#2468f7", color: "#fff", fontWeight: 700,
-    border: "none", borderRadius: 9, padding: "12px 26px",
-    cursor: "pointer", fontSize: 15, marginBottom: 24, marginTop:2, letterSpacing:0.08
-  },
-  chatArea: {
-    margin: "0 0 15px 0",
-    background: "#f4f8ff",
-    minHeight: 320,
-    maxHeight: 440,
-    width: "100%",
-    borderRadius: 16,
-    padding: "18px 12px 13px 12px",
-    scrollBehavior: "smooth",
-    overflowY: "auto",
-    display: "flex",
-    flexDirection: "column",
-    gap: 16
-  },
-  chatMsgRow: {display: "flex"},
-  aiBubble: {
-    maxWidth: "70%",
-    background: "#eef1f6",
-    color: "#1b2338",
-    borderRadius: "14px 14px 14px 7px",
-    alignSelf: "flex-start",
-    marginRight: "auto",
-    padding: "14px 18px 11px 13px",
-    fontWeight: 500,
-    lineHeight: 1.53,
-    fontSize:15,
-    boxShadow:"0 2px 12px #658afe11"
-  },
-  supplierBubble: {
-    maxWidth: "70%",
-    background: "#1f6fff",
-    color: "#fff",
-    borderRadius: "12px 16px 9px 14px",
-    alignSelf: "flex-end",
-    marginLeft: "auto",
-    padding: "14px 16px 11px 13px",
-    fontWeight: 500,
-    lineHeight: 1.53,
-    fontSize:15,
-    boxShadow:"0 2px 18px #2e74ff0d"
-  },
-  senderLabel: { fontWeight: 800, fontSize: 17, marginBottom: 7, color: "#06247c" },
-  senderSupplier: { fontWeight: 800, fontSize: 17, marginBottom: 7, color: "#fff" },
-  chatTimestamp: { fontSize:12, color:"#6e7896", margin: "8px 0 0 3px", fontWeight:500 }
-};
 
 async function fetchNegotiation(id) {
   const res = await axios.get(`${API_URL}/api/negotiations/${id}`);
@@ -239,25 +167,16 @@ export default function NegotiationChat() {
   };
 
   if (!negotiation)
-    return <div>Loading negotiation...</div>;
+    return <div className="responsive-container">Loading negotiation...</div>;
 
   const supplierName = negotiation.target_details?.supplierName || "";
   const buyerName = negotiation.target_details?.buyerName || "AI Bot";
   const isConcluded = negotiation.status === "concluded" || concluded;
 
   return (
-    <div style={chatStyles.container}>
+    <div className="chat-container">
       {/* Connection Status Indicator */}
-      <div style={{
-        padding: "8px 12px",
-        marginBottom: 16,
-        borderRadius: 6,
-        background: socketConnected ? "#d4edda" : "#f8d7da",
-        color: socketConnected ? "#155724" : "#721c24",
-        border: `1px solid ${socketConnected ? "#c3e6cb" : "#f5c6cb"}`,
-        fontSize: 13,
-        fontWeight: 600
-      }}>
+      <div className={`connection-status ${socketConnected ? 'connected' : 'disconnected'}`}>
         {socketConnected ? "🟢 Connected" : "🔴 Disconnected"} 
         {!API_URL && " | ⚠️ API_URL not set!"}
         {API_URL && ` | Backend: ${API_URL}`}
@@ -265,59 +184,37 @@ export default function NegotiationChat() {
       </div>
       
       {/* Title Section */}
-      <div style={chatStyles.titleRow}>
+      <h1 className="chat-title">
         {negotiation.name}
-        {supplierName &&
-          <span style={{fontWeight:400, fontSize:22, color:"#757b90", marginLeft:8}}>
-            {"— "}{supplierName}
-          </span>
-        }
-      </div>
-      <div style={chatStyles.subRow}>
-        <span style={{
-          ...chatStyles.statusChip,
-          background: isConcluded
-            ? "linear-gradient(90deg,#fae2e2 70%,#ff5b5b 100%)"
-            : "linear-gradient(90deg,#e0faef 60%,#6ee4a6 100%)",
-          color: isConcluded ? "#bc1720" : "#188a42"
-        }}>
+        {supplierName && (
+          <span className="chat-supplier-name">— {supplierName}</span>
+        )}
+      </h1>
+      
+      <div className="chat-subtitle">
+        <span className={`status-chip ${isConcluded ? 'concluded' : 'active'}`}>
           {isConcluded ? "Concluded" : "Active"}
         </span>
-        <span style={chatStyles.supplierSub}>
+        <span className="supplier-info">
           Supplier: <b>{supplierName}</b>
         </span>
       </div>
-      <button
-        onClick={downloadPDF}
-        style={chatStyles.downloadBtn}
-      >
-        <span style={{fontSize:17, marginRight:10}}>⬇️</span>
+      
+      <button onClick={downloadPDF} className="download-btn">
+        <span style={{fontSize:17}}>⬇️</span>
         Download Full Negotiation as PDF
       </button>
 
       {/* UserType Picker */}
       {!userType && (
-        <div style={{ 
-          marginBottom: 16, 
-          padding: "16px", 
-          background: "#fff3cd", 
-          border: "2px solid #ffc107",
-          borderRadius: 8
-        }}>
-          <label style={{fontSize:15, fontWeight:600, color: "#856404"}}>
+        <div className="user-type-selector">
+          <label className="user-type-label">
             ⚠️ Please select who you are to start chatting: 
           </label>
           <select 
             onChange={e => setUserType(e.target.value)} 
             value={userType} 
-            style={{
-              fontSize:14, 
-              padding:"8px 11px", 
-              borderRadius:6,
-              marginLeft: 10,
-              border: "2px solid #ffc107",
-              background: "#fff"
-            }}
+            className="user-type-select"
           >
             <option value="">-- Select Your Role --</option>
             <option value="buyer">Buyer</option>
@@ -326,24 +223,22 @@ export default function NegotiationChat() {
         </div>
       )}
 
-      {/* --- Chat Bubble Area --- */}
-      <div style={chatStyles.chatArea}>
+      {/* Chat Bubble Area */}
+      <div className="chat-messages">
         {chatHistory.map((msg, idx) => {
           const isSupplier = msg.sender === "supplier";
-          let bubbleStyle = isSupplier ? chatStyles.supplierBubble : chatStyles.aiBubble;
-          let alignStyle = {justifyContent: isSupplier ? "flex-end" : "flex-start"};
-          let lab = isSupplier
+          const senderLabel = isSupplier
             ? `Supplier: ${supplierName || "Supplier"}`
             : `${buyerName || "AI Bot"} - AI Bot`;
-          let labelStyle = isSupplier ? chatStyles.senderSupplier : chatStyles.senderLabel;
+          
           return (
-            <div key={idx} style={{ ...chatStyles.chatMsgRow, ...alignStyle }}>
-              <div style={bubbleStyle}>
-                <div style={labelStyle}>{lab}</div>
-                <div style={{whiteSpace:"pre-line", wordBreak:"break-word"}}>
+            <div key={idx} className="message-row" style={{justifyContent: isSupplier ? "flex-end" : "flex-start"}}>
+              <div className={`message-bubble ${isSupplier ? 'supplier' : 'ai'}`}>
+                <div className="message-sender">{senderLabel}</div>
+                <div className="message-text">
                   {formatMessage(msg.text)}
                 </div>
-                <div style={chatStyles.chatTimestamp}>
+                <div className="message-timestamp">
                   {msg.timestamp ? new Date(msg.timestamp).toLocaleString() : ""}
                 </div>
               </div>
@@ -353,20 +248,11 @@ export default function NegotiationChat() {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* --- Chat Input Bar --- */}
+      {/* Chat Input Bar */}
       {!concluded && userType && (
-        <div style={{ display: "flex", gap: 11, marginTop: 13, alignItems:"center" }}>
+        <div className="chat-input-container">
           <input
-            style={{
-              flex: 1,
-              fontSize: 15,
-              padding: "13px 13px",
-              borderRadius: 10,
-              border: "1.5px solid #e2e8f0",
-              marginRight: 6,
-              outline: "none",
-              boxShadow: "0 0.5px 0 #f5f8fb"
-            }}
+            className="chat-input"
             disabled={!userType}
             placeholder="Type a message..."
             value={messageText}
@@ -374,40 +260,20 @@ export default function NegotiationChat() {
             onKeyDown={e => e.key === "Enter" && sendMessage()}
           />
           <button
-            style={{
-              background: "#2468f7", color:"#fff", fontWeight:700, fontSize:15,
-              border: "none", borderRadius: 8, padding: "12px 19px", cursor:"pointer",
-              marginRight: 6
-            }}
+            className="chat-send-btn"
             onClick={sendMessage}
             disabled={!userType || !messageText.trim()}
           >
             Send
           </button>
-          <button
-            onClick={conclude}
-            style={{
-              background: "#ef314d",
-              color: "#fff",
-              borderRadius: 10,
-              padding: "12px 17px",
-              fontWeight: 800,
-              fontSize: 15,
-              border: "none",
-              marginLeft: 4
-            }}
-          >
+          <button onClick={conclude} className="chat-conclude-btn">
             Conclude Negotiation
           </button>
         </div>
       )}
+      
       {concluded && (
-        <div style={{
-          marginTop: 15,
-          color: "#c00",
-          fontWeight: "bold",
-          fontSize: 17
-        }}>
+        <div className="concluded-message">
           Negotiation has ended.
         </div>
       )}

@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import "./BuyerDashboard.css";
 
 // 👇 Use env variable for backend API
 const API_URL = process.env.REACT_APP_API_URL; // e.g. https://procurebot-backend.onrender.com
@@ -8,61 +9,34 @@ const API_URL = process.env.REACT_APP_API_URL; // e.g. https://procurebot-backen
 const CHECK_ENDPOINT = `${API_URL}/api/negotiations/code-exists/`;
 const BY_BUYER_ENDPOINT = `${API_URL}/api/negotiations/by-buyer`;
 
-const dashStyles = {
-  page: { background: "#f4f5fa", minHeight: "100vh" },
-  main: { maxWidth: 1120, margin: "46px auto", padding: 32, fontFamily: "Inter,Helvetica,Arial,sans-serif" },
-  statRow: { display: "flex", gap: 18, margin: "0 0 27px 0" },
-  statCard: {
-    flex: 1,
-    background: "#fff",
-    borderRadius: 16,
-    padding: "26px 0 24px 0",
-    boxShadow: "0 2px 10px #3b357012",
-    display: "flex", flexDirection: "column", alignItems:"center"
-  },
-  statIcon: { fontSize: 33, marginBottom: 4 },
-  statLabel: { marginTop: 4, marginBottom: 2, color: "#888caf", fontWeight: 700, fontSize:17, letterSpacing:0.01 },
-  statValue: { fontWeight: 800, fontSize: 27, color: "#19193d"},
-  statValueConcluded: { fontWeight: 800, fontSize: 27, color: "#30c874"},
-  filterCard: { background: "#fff", borderRadius: 13, boxShadow:"0 1px 8px #dff3ff16", padding: 19, marginBottom: 22, display: "flex", flexDirection: "column", gap:15 },
-  filterRow: { display: "flex", alignItems: "flex-end", gap: 22, justifyContent: "flex-start" },
-  filterInput: { borderRadius: 8, padding: "11px 15px", border: 0, background: "#f6f7fd", fontSize: 15, width:"100%" },
-  filterInputSearch: { borderRadius: 8, padding: "11px 15px", border: 0, background: "#f6f7fd", fontSize: 15, width:"100%", marginTop:5 },
-  filterBtn: { padding: "13px 38px", borderRadius: 8, border:0, background: "#6047ed", color:"#fff", fontWeight: 700, fontSize:16, marginLeft:10, cursor:"pointer" },
-  tableWrap: { background:"#fff", borderRadius:13, minHeight:100, overflow:"auto" },
-  tabRow: { display:"flex", gap:13, margin:"0 0 17px 0" },
-  tab: isActive => ({
-    fontWeight: isActive ? 800 : 600,
-    color: isActive ? "#6047ed" : "#7e8ca6",
-    background: isActive ? "#eef3fe" : "#f6f7fb",
-    border:"none", borderRadius:9,
-    padding:"8px 24px", cursor:"pointer", fontSize:15
-  }),
-  table: { minWidth: 920, width:"100%", borderCollapse:"separate", borderSpacing: 0, tableLayout: "fixed" },
-  thead: { background: "#f9faff" },
-  th: { fontWeight: 600, fontSize:14, color:"#7a7c8f", padding: "10px 0", letterSpacing: 0.01 },
-  td: { fontSize:15, color:"#211e43", padding: "15px 0", borderBottom:"1px solid #f0f2f8", fontWeight:500, overflow:"hidden", textOverflow:"ellipsis" },
-  nameCol: { maxWidth: 260, whiteSpace: "nowrap" },
-  supplierCol: { maxWidth: 160, whiteSpace: "nowrap" },
-  pdfCol: { width: 80 },
-  openCol: { width: 80 },
-  statusCell: {width: 97},
-  statusPill: status => ({
-    display:"inline-block", minWidth:66, padding:"6px 16px",
-    borderRadius: 23, fontWeight:700, fontSize:14,
-    marginRight:18,
-    background: status==="active" ? "#e5f8ef" : "#ffeaea",
-    color: status==="active" ? "#16bb76" : "#ed4c57", textTransform: "capitalize"
-  }),
-  openBtn: { fontWeight:700, color:"#6047ed", background:"#e9e7fd", border:"none", borderRadius:7, padding:"8px 18px", fontSize:14, cursor:"pointer", marginRight:10 },
-  pdfBtn: { fontWeight:700, color:"#fff", background:"#ffb6b6", border:"none", borderRadius:7, padding:"8px 18px", fontSize:14, cursor:"pointer" }
-};
-
 const icons = {
-  total: <span role="img" aria-label="total">📄</span>,
-  active: <span role="img" aria-label="active">💬</span>,
-  concluded: <span style={{color: "#31c881", fontWeight:700}}>&#10003;</span>,
-  suppliers: <span role="img" aria-label="suppliers">👥</span>,
+  total: (
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+      <polyline points="14 2 14 8 20 8"></polyline>
+      <line x1="16" y1="13" x2="8" y2="13"></line>
+      <line x1="16" y1="17" x2="8" y2="17"></line>
+      <polyline points="10 9 9 9 8 9"></polyline>
+    </svg>
+  ),
+  active: (
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+    </svg>
+  ),
+  concluded: (
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="20 6 9 17 4 12"></polyline>
+    </svg>
+  ),
+  suppliers: (
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+      <circle cx="9" cy="7" r="4"></circle>
+      <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+      <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+    </svg>
+  ),
 };
 
 export default function BuyerDashboard() {
@@ -98,6 +72,30 @@ export default function BuyerDashboard() {
     setLoading(false);
   };
 
+  const deleteNegotiation = async (id, name) => {
+    // Show confirmation dialog
+    const confirmed = window.confirm(
+      `Are you sure you want to delete "${name}"?\n\nThis action cannot be undone.`
+    );
+    
+    if (!confirmed) return;
+
+    try {
+      await axios.delete(`${API_URL}/api/negotiations/${id}`, {
+        data: {
+          email: email.trim(),
+          dashboard_code: dashboardCode.trim()
+        }
+      });
+      
+      // Remove from local state
+      setNegotiations(prev => prev.filter(n => n.id !== id));
+      alert("Negotiation deleted successfully!");
+    } catch (err) {
+      alert("Failed to delete negotiation. Please try again.");
+    }
+  };
+
   const filtered = useMemo(() => {
     let list = negotiations;
     if (tab === "active") list = list.filter(n => n.status !== "concluded");
@@ -127,33 +125,39 @@ export default function BuyerDashboard() {
   }, [negotiations]);
 
   return (
-    <div style={dashStyles.page}>
-      <div style={dashStyles.main}>
+    <div className="dashboard-page">
+      <div className="dashboard-container">
+        {/* Dashboard Header */}
+        <div className="dashboard-header">
+          <h1 className="dashboard-title">Buyer Dashboard</h1>
+          <p className="dashboard-subtitle">Manage and monitor your supplier negotiations</p>
+        </div>
+
         {/* Stat cards */}
-        <div style={dashStyles.statRow}>
-          <StatCard label="Total Negotiations" value={total} icon={icons.total} color="#6047ed" />
-          <StatCard label="Active" value={active} icon={icons.active} color="#6047ed" />
-          <StatCard label="Concluded" value={concluded} icon={icons.concluded} color="#37d688" green />
-          <StatCard label="Suppliers" value={suppliers} icon={icons.suppliers} color="#ffc928" />
+        <div className="stats-grid">
+          <StatCard label="Total Negotiations" value={total} icon={icons.total} />
+          <StatCard label="Active" value={active} icon={icons.active} />
+          <StatCard label="Concluded" value={concluded} icon={icons.concluded} green />
+          <StatCard label="Suppliers" value={suppliers} icon={icons.suppliers} />
         </div>
 
         {/* Login/Filters */}
-        <div style={dashStyles.filterCard}>
-          <form onSubmit={fetchNegotiations} style={dashStyles.filterRow}>
-            <div style={{ flex: 2, display: "flex", flexDirection: "column" }}>
-              <label style={{fontWeight:600, marginBottom:3, fontSize:15}}>Email</label>
+        <div className="filter-card">
+          <form onSubmit={fetchNegotiations} className="filter-form">
+            <div className="filter-group">
+              <label className="filter-label">Email</label>
               <input
-                style={dashStyles.filterInput}
+                className="filter-input"
                 placeholder="Email"
                 value={email}
                 onChange={e => {setEmail(e.target.value); setCodeRequired(null); setDashboardCode(""); setNegotiations([]);}}
                 required
               />
             </div>
-            <div style={{ flex: 2, display: "flex", flexDirection: "column" }}>
-              <label style={{fontWeight:600, marginBottom:3, fontSize:15}}>Access Code</label>
+            <div className="filter-group">
+              <label className="filter-label">Access Code</label>
               <input
-                style={dashStyles.filterInput}
+                className="filter-input"
                 placeholder="Access Code"
                 value={dashboardCode}
                 onChange={e => setDashboardCode(e.target.value)}
@@ -165,11 +169,7 @@ export default function BuyerDashboard() {
             </div>
             <button
               type="submit"
-              style={{
-                ...dashStyles.filterBtn,
-                background: "#6047ed",
-                marginBottom:2
-              }}
+              className="filter-submit-btn"
               disabled={loading || !dashboardCode || !email}
             >
               Continue
@@ -177,7 +177,7 @@ export default function BuyerDashboard() {
           </form>
           <input
             type="text"
-            style={dashStyles.filterInputSearch}
+            className="search-input"
             placeholder="Search negotiations by name, supplier, or email..."
             value={search}
             onChange={e => setSearch(e.target.value)}
@@ -185,43 +185,47 @@ export default function BuyerDashboard() {
         </div>
 
         {/* Tabs */}
-        <div style={dashStyles.tabRow}>
-          <button onClick={() => setTab("active")} style={dashStyles.tab(tab==="active")}>
+        <div className="tabs-row">
+          <button onClick={() => setTab("active")} className={`tab-button ${tab==="active" ? "active" : ""}`}>
             Active Negotiations ({active})
           </button>
-          <button onClick={() => setTab("concluded")} style={dashStyles.tab(tab==="concluded")}>
+          <button onClick={() => setTab("concluded")} className={`tab-button ${tab==="concluded" ? "active" : ""}`}>
             Concluded ({concluded})
           </button>
         </div>
 
         {/* Table */}
-        <div style={dashStyles.tableWrap}>
-          <table style={dashStyles.table}>
+        <div className="table-wrapper">
+          <table className="negotiations-table">
             <colgroup>
-              <col style={{width: '260px'}}/>
-              <col style={{width: '100px'}}/>
-              <col style={{width: '160px'}}/>
-              <col style={{width: '180px'}}/>
-              <col style={{width: '180px'}}/>
-              <col style={{width: '90px'}}/>
-              <col style={{width: '90px'}}/>
+              <col style={{width: '22%'}}/>
+              <col style={{width: '10%'}}/>
+              <col style={{width: '18%'}}/>
+              <col style={{width: '16%'}}/>
+              <col style={{width: '16%'}}/>
+              <col style={{width: '18%'}}/>
             </colgroup>
-            <thead style={dashStyles.thead}>
+            <thead className="table-head">
               <tr>
-                <th style={dashStyles.th}>Name</th>
-                <th style={{...dashStyles.th, width:100}}>Status</th>
-                <th style={dashStyles.th}>Supplier</th>
-                <th style={dashStyles.th}>Created</th>
-                <th style={dashStyles.th}>Updated</th>
-                <th style={{...dashStyles.th}}>Open</th>
-                <th style={{...dashStyles.th}}>PDF</th>
+                <th className="table-th">Name</th>
+                <th className="table-th">Status</th>
+                <th className="table-th">Supplier</th>
+                <th className="table-th">Created</th>
+                <th className="table-th">Updated</th>
+                <th className="table-th">Actions</th>
               </tr>
             </thead>
             <tbody>
               {filtered.length === 0 && (
                 <tr>
-                  <td colSpan="7" style={{textAlign:"center", fontSize:17, fontWeight:600, color:"#b7babe", padding:"34px 0"}}>
-                    No negotiations found
+                  <td colSpan="6" className="table-td" style={{textAlign:"center", padding:"34px 0"}}>
+                    <div className="empty-state">
+                      <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                        <path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"/>
+                      </svg>
+                      <h3>No negotiations found</h3>
+                      <p>Try adjusting your search or filters</p>
+                    </div>
                   </td>
                 </tr>
               )}
@@ -229,28 +233,53 @@ export default function BuyerDashboard() {
                 let td = n.target_details;
                 if (typeof td === "string") { try { td = JSON.parse(td); } catch {} }
                 return (
-                  <tr key={n.id}>
-                    <td style={{
-                      ...dashStyles.td,
-                      ...dashStyles.nameCol
-                    }} title={n.name}>{n.name}</td>
-                    <td style={{...dashStyles.td, ...dashStyles.statusCell}}>
-                      <span style={dashStyles.statusPill(n.status)}>
+                  <tr key={n.id} className="table-row-hover">
+                    <td className="table-td name-col" title={n.name} data-label="Name">{n.name}</td>
+                    <td className="table-td" data-label="Status">
+                      <span className={`status-pill ${n.status}`}>
                         {n.status.charAt(0).toUpperCase() + n.status.slice(1)}
                       </span>
                     </td>
-                    <td style={{...dashStyles.td, ...dashStyles.supplierCol}} title={td?.supplierName || ""}>{td?.supplierName || ""}</td>
-                    <td style={dashStyles.td}>{new Date(n.created_at).toLocaleString()}</td>
-                    <td style={dashStyles.td}>{new Date(n.updated_at).toLocaleString()}</td>
-                    <td style={{...dashStyles.td, ...dashStyles.openCol}}>
-                      <Link to={`/negotiation/${n.id}`}>
-                        <button style={dashStyles.openBtn}>Open</button>
-                      </Link>
-                    </td>
-                    <td style={{...dashStyles.td, ...dashStyles.pdfCol}}>
-                      <a href={`${API_URL}/api/negotiations/${n.id}/export-pdf`} target="_blank" rel="noopener noreferrer">
-                        <button style={dashStyles.pdfBtn}>PDF</button>
-                      </a>
+                    <td className="table-td supplier-col" title={td?.supplierName || ""} data-label="Supplier">{td?.supplierName || ""}</td>
+                    <td className="table-td" data-label="Created">{new Date(n.created_at).toLocaleString()}</td>
+                    <td className="table-td" data-label="Updated">{new Date(n.updated_at).toLocaleString()}</td>
+                    <td className="table-td" data-label="Actions">
+                      <div className="action-buttons">
+                        <Link to={`/negotiation/${n.id}`}>
+                          <button className="open-btn" title="Open negotiation">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                            </svg>
+                            Open
+                          </button>
+                        </Link>
+                        <a href={`${API_URL}/api/negotiations/${n.id}/export-pdf`} target="_blank" rel="noopener noreferrer">
+                          <button className="pdf-btn" title="Download PDF">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                              <polyline points="14 2 14 8 20 8"></polyline>
+                              <line x1="16" y1="13" x2="8" y2="13"></line>
+                              <line x1="16" y1="17" x2="8" y2="17"></line>
+                              <polyline points="10 9 9 9 8 9"></polyline>
+                            </svg>
+                            PDF
+                          </button>
+                        </a>
+                        <button 
+                          className="delete-btn" 
+                          onClick={() => deleteNegotiation(n.id, n.name)}
+                          title="Delete negotiation"
+                        >
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                            <line x1="10" y1="11" x2="10" y2="17"></line>
+                            <line x1="14" y1="11" x2="14" y2="17"></line>
+                          </svg>
+                          Delete
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 );
@@ -263,12 +292,12 @@ export default function BuyerDashboard() {
   );
 }
 
-function StatCard({ label, value, icon, color, green }) {
+function StatCard({ label, value, icon, green }) {
   return (
-    <div style={dashStyles.statCard}>
-      <div style={{...dashStyles.statIcon, color}}>{icon}</div>
-      <div style={dashStyles.statLabel}>{label}</div>
-      <div style={green ? dashStyles.statValueConcluded : dashStyles.statValue}>{value}</div>
+    <div className="stat-card">
+      <div className="stat-icon">{icon}</div>
+      <div className="stat-label">{label}</div>
+      <div className={`stat-value ${green ? 'concluded' : ''}`}>{value}</div>
     </div>
   );
 }

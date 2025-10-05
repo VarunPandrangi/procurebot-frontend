@@ -1,0 +1,132 @@
+/* ===================================
+   THEME SYSTEM - CSS CUSTOM PROPERTIES
+   ==================================== */
+
+:root {
+  /* Design System Spacing (8px base) */
+  --spacing-xs: 8px;
+  --spacing-sm: 16px;
+  --spacing-md: 24px;
+  --spacing-lg: 32px;
+  --spacing-xl: 48px;
+  --spacing-2xl: 64px;
+
+  /* Typography Scale */
+  --font-size-xs: 12px;
+  --font-size-sm: 14px;
+  --font-size-base: 16px;
+  --font-size-lg: 18px;
+  --font-size-xl: 24px;
+  --font-size-2xl: 32px;
+  --font-size-3xl: 48px;
+
+  /* Border Radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+
+  /* Transition */
+  --transition-fast: 0.15s ease;
+  --transition-base: 0.3s ease;
+  --transition-slow: 0.5s ease;
+
+  /* Light Theme Colors */
+  --color-bg-primary: #ffffff;
+  --color-bg-secondary: #f5f7fa;
+  --color-bg-tertiary: #e8ecf1;
+  --color-bg-elevated: #ffffff;
+  --color-nav-bg: rgba(255, 255, 255, 0.8);
+  
+  --color-text-primary: #1d1d1f;
+  --color-text-secondary: #6e6e73;
+  --color-text-tertiary: #86868b;
+  
+  --color-border: #d2d2d7;
+  --color-border-light: #e8e8ed;
+  
+  --color-accent: #0071e3;
+  --color-accent-hover: #0077ed;
+  --color-accent-light: #e8f2ff;
+  
+  --color-success: #34c759;
+  --color-success-light: #d7f7e0;
+  
+  --color-error: #ff3b30;
+  --color-error-light: #ffe5e3;
+  
+  --color-warning: #ff9500;
+  --color-warning-light: #fff4e5;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.05), 0 2px 4px rgba(0, 0, 0, 0.03);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.06), 0 4px 6px rgba(0, 0, 0, 0.04);
+  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.08), 0 10px 10px rgba(0, 0, 0, 0.04);
+  
+  /* Interactive Background */
+  --bg-gradient-start: rgba(0, 113, 227, 0.05);
+  --bg-gradient-end: rgba(52, 199, 89, 0.05);
+  
+  /* Card backgrounds */
+  --color-card-bg: #ffffff;
+  --color-card-hover: #fafafa;
+}
+
+/* Dark Theme */
+[data-theme="dark"] {
+  --color-bg-primary: #000000;
+  --color-bg-secondary: #1c1c1e;
+  --color-bg-tertiary: #2c2c2e;
+  --color-bg-elevated: #1c1c1e;
+  --color-nav-bg: rgba(0, 0, 0, 0.8);
+  
+  --color-text-primary: #f5f5f7;
+  --color-text-secondary: #a1a1a6;
+  --color-text-tertiary: #8e8e93;
+  
+  --color-border: #38383a;
+  --color-border-light: #2c2c2e;
+  
+  --color-accent: #0a84ff;
+  --color-accent-hover: #409cff;
+  --color-accent-light: #1a2840;
+  
+  --color-success: #30d158;
+  --color-success-light: #1e3a26;
+  
+  --color-error: #ff453a;
+  --color-error-light: #3d1f1e;
+  
+  --color-warning: #ff9f0a;
+  --color-warning-light: #3d2f1e;
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5), 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.6), 0 2px 4px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.7), 0 4px 6px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.8), 0 10px 10px rgba(0, 0, 0, 0.6);
+  
+  --bg-gradient-start: rgba(10, 132, 255, 0.08);
+  --bg-gradient-end: rgba(48, 209, 88, 0.08);
+  
+  --color-card-bg: #1c1c1e;
+  --color-card-hover: #2c2c2e;
+}
+
+/* Smooth theme transition */
+* {
+  transition: background-color var(--transition-base), 
+              border-color var(--transition-base), 
+              color var(--transition-base),
+              box-shadow var(--transition-base);
+}
+
+/* Reset transitions for animations and transforms */
+*:where(:not(:has(> *))) {
+  transition: background-color var(--transition-base), 
+              border-color var(--transition-base), 
+              color var(--transition-base),
+              transform var(--transition-fast),
+              opacity var(--transition-fast);
+}
